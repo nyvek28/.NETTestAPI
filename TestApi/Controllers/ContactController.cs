@@ -4,18 +4,31 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using TestApi.Models;
+using TestApi.Services;
 
 namespace TestApi.Controllers
 {
     public class ContactController : ApiController
     {
 
-        public string[] Get()
+        private ContactRepository contactRepo;
+
+        public ContactController()
         {
-            return new string[] {
-                "Hello",
-                "World"
-            };
+            this.contactRepo = new ContactRepository();
+        }
+
+        public Contact[] Get()
+        {
+            return this.contactRepo.GetAllContacts();
+        }
+
+        public HttpResponseMessage Post(Contact contact)
+        {
+            this.contactRepo.SaveContact(contact);
+            var res = Request.CreateResponse<Contact>(System.Net.HttpStatusCode.Created, contact);
+            return res;
         }
 
     }
